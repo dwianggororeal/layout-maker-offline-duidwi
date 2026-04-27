@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Layout Maker</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app">
+      <aside class="panel panel-left">
+        <div class="brand">
+          <span class="brand-mark">LM</span>
+          <div>
+            <h1>Layout Maker</h1>
+            <p>Editor kotak ringan, tanpa localhost/server.</p>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="section-title">Layout</div>
+          <label title="Nama layout yang akan ikut tersimpan di file TXT.">Nama<input id="layoutName" type="text" value="New Layout"></label>
+          <div class="grid-2">
+            <label title="Lebar area layout dalam pixel.">Width px<input id="layoutWidth" type="number" min="1" value="1280"></label>
+            <label title="Tinggi area layout dalam pixel.">Height px<input id="layoutHeight" type="number" min="1" value="720"></label>
+          </div>
+          <label title="Warna dasar background layout.">Background<input id="layoutBg" type="color" value="#172033"></label>
+          <div class="button-row">
+            <button id="importLayoutBg" type="button" title="Import gambar sebagai background layout. Gambar ikut disimpan ke TXT sebagai data.">Import BG Image</button>
+            <button id="clearLayoutBg" type="button" title="Hapus gambar background layout, warna dasar tetap dipakai.">Clear BG Image</button>
+          </div>
+          <input id="layoutBgFile" class="hidden" type="file" accept="image/*">
+          <input id="barMaskFile" class="hidden" type="file" accept="image/*">
+          <label title="Opacity gambar background saja. Object di atasnya tidak ikut transparan.">BG Image Opacity<input id="layoutBgOpacity" type="number" min="0" max="1" step="0.05" value="1"></label>
+          <p id="layoutBgName" class="mini-note">No background image.</p>
+          <div class="button-row">
+            <button id="applyLayout" class="primary" title="Terapkan nama, ukuran, warna, dan opacity layout dari input di atas.">Apply Size</button>
+            <button id="fitView" title="Sesuaikan zoom canvas agar layout muat di layar.">Fit</button>
+          </div>
+          <label title="Preset ukuran layout cepat.">
+            <select id="presetSelect"></select>
+          </label>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Tambah Object</div>
+          <label title="Pilih jenis object prototype yang ingin dibuat.">
+            <select id="newType">
+              <option value="single_img">Single Img</option>
+              <option value="button">Button</option>
+              <option value="variable_text">Variable Text</option>
+              <option value="variable_bar">Variable Bar</option>
+            </select>
+          </label>
+          <button id="addObject" class="accent full" title="Buat object baru sesuai type yang dipilih.">+ Buat Kotak</button>
+          <button id="addSpritesheet" class="full" title="Buat object spritesheet. Setting frame, fps, dan mode ada di panel kanan saat object dipilih.">+ Sprite Sheet</button>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Path Finding</div>
+          <div class="button-row">
+            <button id="createPath" class="accent" title="Buat path finding baru sebagai layer terpisah, bukan object kotak.">Create Path</button>
+            <button id="deletePath" class="danger" title="Hapus path finding yang sedang dipilih.">Delete Path</button>
+          </div>
+          <div class="button-row">
+            <button id="addPathDot" title="Tambah titik baru di path yang dipilih. Titiknya bisa di-drag langsung di canvas.">Add Dot</button>
+            <button id="deletePathDot" title="Hapus titik terakhir dari path yang dipilih.">Delete Dot</button>
+          </div>
+          <label title="Pilih path yang ingin diedit.">
+            <select id="pathSelect"></select>
+          </label>
+          <div class="grid-2">
+            <label title="Warna garis path untuk membedakan jalur.">Line<input id="pathStroke" type="color" value="#ffd184"></label>
+            <label title="Warna titik path yang bisa di-drag.">Dot<input id="pathPointColor" type="color" value="#7bc8a4"></label>
+            <label title="Ketebalan garis path.">Width<input id="pathWidth" type="number" min="1" value="5"></label>
+            <label title="Tutup path menjadi bentuk polygon."><input id="pathClosed" type="checkbox"> Closed</label>
+          </div>
+          <p class="mini-note">Path ini layer terpisah, bukan object. Drag dot langsung di canvas.</p>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Saved Objects</div>
+          <div id="objectList" class="object-list"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Save / Load</div>
+          <button id="pickStorage" class="accent full" title="Pilih folder project layout maker. App akan otomatis memakai atau membuat subfolder saves di dalamnya.">Pilih Folder Project / Saves</button>
+          <p class="guide-note">Guide: klik tombol di atas, pilih folder project <strong>layout maker</strong>. App otomatis pakai/bikin folder <strong>saves</strong>. Setelah itu <strong>Save Folder</strong> langsung menulis TXT ke saves tanpa browse ulang.</p>
+          <label title="Nama file TXT yang akan dibuat di folder saves.">Nama file save<input id="saveName" type="text" value="my-layout"></label>
+          <div class="button-row">
+            <button id="saveFolder" class="primary" title="Simpan layout ke folder saves di project yang sudah dipilih.">Save Folder</button>
+            <button id="downloadTxt" title="Download TXT manual lewat browser, tanpa memakai folder saves.">Download TXT</button>
+          </div>
+          <label title="Daftar file TXT yang ditemukan di folder saves.">
+            <select id="saveSelect"></select>
+          </label>
+          <div class="button-row">
+            <button id="loadSave" title="Load file TXT yang dipilih dari folder saves.">Load Selected</button>
+            <button id="importTxt" title="Import TXT manual dari file picker kalau belum memilih folder saves.">Import TXT</button>
+          </div>
+          <input id="importFile" class="hidden" type="file" accept=".txt,.json,application/json,text/plain">
+          <p id="status" class="status">Siap.</p>
+        </section>
+      </aside>
+
+      <main class="stage-wrap">
+        <div class="topbar">
+          <div>
+            <strong id="selectionName">Tidak ada object dipilih</strong>
+            <span id="stageInfo"></span>
+          </div>
+          <div class="top-actions">
+            <label class="toggle-pill" title="Aktifkan/nonaktifkan tooltip cepat untuk tombol dan input editor."><input id="enableTooltips" type="checkbox" checked> Tooltips</label>
+            <label class="toggle-pill" title="Tampilkan titik anchor tiap object di canvas."><input id="showAnchors" type="checkbox" checked> Show Anchors</label>
+            <div class="hint">Drag untuk move. Tarik handle untuk resize. Shift + resize = proporsional. Titik atas = rotate.</div>
+          </div>
+        </div>
+        <div id="viewport" class="viewport">
+          <div class="floating-tools">
+            <label class="toggle-pill hot" title="Aktifkan/nonaktifkan drag object dan titik path. Default aktif."><input id="enableDrag" type="checkbox" checked> Enable Drag</label>
+            <label class="toggle-pill" title="Saat aktif, drag/resize/dot path akan nempel ke ukuran grid."><input id="snapGrid" type="checkbox"> Snap Grid</label>
+            <label class="toggle-pill" title="Saat aktif, drag dikunci lurus horizontal atau vertikal."><input id="rulerMode" type="checkbox"> Ruler Straight</label>
+            <label class="mini-field" title="Ukuran grid untuk snap dalam pixel.">Grid <input id="gridSize" type="number" min="2" value="32"></label>
+          </div>
+          <div id="stage" class="stage"></div>
+        </div>
+      </main>
+
+      <aside class="panel panel-right">
+        <section class="card">
+          <div class="section-title">Object</div>
+          <div id="emptyInspector" class="empty empty-inspector">PILIH OBJECT di canvas untuk melihat &amp; mengatur parameter</div>
+          <div id="inspector" class="inspector hidden">
+            <label title="Nama object yang tampil di list dan export TXT.">Label<input id="objLabel" type="text"></label>
+            <label title="Jenis object. Setting tambahan muncul di bawah sesuai type.">Type
+              <select id="objType">
+                <option value="single_img">Single Img</option>
+                <option value="spritesheet">Spritesheet</option>
+                <option value="button">Button</option>
+                <option value="variable_text">Variable Text</option>
+                <option value="variable_bar">Variable Bar</option>
+              </select>
+            </label>
+            <div class="grid-2">
+              <label title="Posisi X object dalam layout.">X<input id="objX" type="number"></label>
+              <label title="Posisi Y object dalam layout.">Y<input id="objY" type="number"></label>
+              <label title="Lebar object dalam pixel.">W<input id="objW" type="number" min="1"></label>
+              <label title="Tinggi object dalam pixel.">H<input id="objH" type="number" min="1"></label>
+              <label title="Rotasi object dalam derajat.">Rotate<input id="objRot" type="number"></label>
+              <label title="Urutan layer object. Angka lebih besar tampil di atas.">Z<input id="objZ" type="number"></label>
+            </div>
+            <label title="Titik referensi object, misalnya bottom middle atau top left.">
+              <select id="objAnchor">
+                <option value="top left">Top Left</option>
+                <option value="top middle">Top Middle</option>
+                <option value="top right">Top Right</option>
+                <option value="middle left">Middle Left</option>
+                <option value="middle">Middle</option>
+                <option value="middle right">Middle Right</option>
+                <option value="bottom left">Bottom Left</option>
+                <option value="bottom middle">Bottom Middle</option>
+                <option value="bottom right">Bottom Right</option>
+              </select>
+            </label>
+            <div id="typeParams" class="type-params"></div>
+            <div class="button-row">
+              <button id="duplicateObject" title="Duplikasi object yang sedang dipilih.">Duplicate</button>
+              <button id="deleteObject" class="danger" title="Hapus object yang sedang dipilih.">Delete</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Raw Export Preview</div>
+          <textarea id="rawPreview" readonly></textarea>
+        </section>
+      </aside>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
